@@ -1,4 +1,4 @@
-import streamlit_app as st
+import streamlit as st
 import torch
 import torchvision
 import torch.nn as nn
