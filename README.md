@@ -1,1 +1,1 @@
-#Solar-Panel-Detection
+# Solar-Panel-Detection
