@@ -15,8 +15,11 @@ from torchvision.models.segmentation import deeplabv3_resnet50
 from torchvision.models.segmentation.deeplabv3 import DeepLabHead
 
 token_name = "GEE_TOKEN"
+@st.cache(persist=True)
+def ee_authenticate(token_name="GEE_TOKEN"):
+    geemap.ee_initialize(token_name=token_name)
 
-geemap.ee_initialize(token_name=token_name)
+ee_authenticate(token_name=token_name)
 
 st.set_page_config()
 warnings.filterwarnings("ignore")
