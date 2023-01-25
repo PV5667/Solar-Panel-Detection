@@ -33,7 +33,7 @@ def load_classification_model(model_path):
     model.eval()
     return model
 
-def load_segementation_model(model_path):
+def load_segmentation_model(model_path):
     num_classes = 1
     model = deeplabv3_resnet50(pretrained=True)
     model.classifier = DeepLabHead(2048, num_classes)
@@ -90,7 +90,6 @@ def split_into_patches(image):
     images = []
     for r in range(0,image.shape[0], 400):
         for c in range(0,image.shape[1], 400):
-            print(r, c)
             images.append(image[r:r+400, c:c+400,:])
     return images
 
@@ -136,9 +135,11 @@ if run_model:
     print(image.shape)
     images = split_into_patches(image)
     classification_model = load_classification_model("solar_classification.pt")
-    segmentation_model = load_segementation_model("solar_segmentation.pt")
-    for patch in images:
-        print(patch.shape)
+    segmentation_model = load_segmentation_model("solar_segmentation.pt")
+    final_img = np.array(Image.open("satellite_img.png").convert("RGB"))
+    final_patches = []
+    for i in range(len(images)):
+        patch = images[i]
         patch_classify = preprocess_classification(patch)
         patch_classify = patch_classify.unsqueeze(0)
         outputs = classification_model(patch_classify)
@@ -150,11 +151,22 @@ if run_model:
             patch_segmentation = preprocess_segmentation(patch)
             patch_segmentation = patch_segmentation.unsqueeze(0)
             pred = segmentation_model(patch_segmentation)
-            mask = torch.sigmoid(pred["out"])[0].detach().numpy().transpose(1, 2, 0)
+            mask = torch.sigmoid(pred["out"])[0].detach().numpy()[0]
+            thresh = 0.05
+            mask[mask < thresh] = 0.0
+            mask[mask > thresh] = 1.0
+            indices = np.where(mask == 1.0)
+            patch[indices] = (100, 255, 100)
             with col2:
-                st.image(mask, use_column_width=True, caption="Segmentation Mask")
-        #else:
-        #    print("Not found")
+                st.image(patch, use_column_width=True, caption="Segmentation Mask")
+            final_patches.append(patch)
+        else: 
+            final_patches.append(patch)
+    for r in range(0,image.shape[0], 400):
+        for c in range(0,image.shape[1], 400):
+            final_img[r:r+400, c:c+400, :] = final_patches.pop(0)
+    with col2:
+        st.image(final_img, use_column_width=True, caption="Final Image")
 
 
 
