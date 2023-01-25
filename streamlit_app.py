@@ -27,7 +27,7 @@ st.title("Solar Panel Detection")
 st.write("This is a demo of the solar panel detection application.")
 
 def load_classification_model(model_path):
-    model = torchvision.models.resnet50(weights="IMAGENET1K_V1")
+    model = torchvision.models.resnet50()
     model.fc = nn.Sequential(nn.Linear(2048, 256), nn.ReLU(), nn.Dropout(0.5), nn.Linear(256, 2))
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model.eval()
