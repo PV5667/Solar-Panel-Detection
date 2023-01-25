@@ -21,7 +21,6 @@ def ee_authenticate(token_name="GEE_TOKEN"):
 
 ee_authenticate(token_name=token_name)
 
-st.set_page_config()
 warnings.filterwarnings("ignore")
 
 st.title("Solar Panel Detection")
