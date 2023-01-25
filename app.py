@@ -1,15 +1,9 @@
-import streamlit as st
+import app as st
 import torch
 import torchvision
-import ee
-import os
 import torch.nn as nn
 import warnings
-import geopandas as gpd
-import folium
-import streamlit as st
 import geemap.foliumap as geemap
-import geopandas as gpd
 import geojson
 import requests
 from PIL import Image
@@ -20,6 +14,9 @@ from albumentations.pytorch.transforms import ToTensorV2
 from torchvision.models.segmentation import deeplabv3_resnet50
 from torchvision.models.segmentation.deeplabv3 import DeepLabHead
 
+token_name = "GEE_TOKEN"
+
+geemap.ee_initialize(token_name=token_name)
 
 st.set_page_config()
 warnings.filterwarnings("ignore")
@@ -42,11 +39,6 @@ def load_segementation_model(model_path):
     model.eval()
     return model
 
-#ee.Authenticate()
-#ee.Initialize()
-
-
-#ee_authenticate(token_name="EARTHENGINE_TOKEN")
 run_model = False
 
 def find_bounds(coordinates):
@@ -129,7 +121,8 @@ if run_model:
     centerlon = (coordinates[0] + coordinates[2])/2
     zoom=18
     #URL = f"https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/{list(find_bounds(coordinates))}/1200x1200?access_token="
-    URL = f"https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/{centerlon},{centerlat},{zoom},0/1200x1200?access_token="
+    access_token = st.secrets["MAPBOX_TOKEN"]
+    URL = f"https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/{centerlon},{centerlat},{zoom},0/1200x1200?access_token={access_token}"
     r = requests.get(url = URL)
     file = open("satellite_img.png", "wb")
     file.write(r.content)
