@@ -26,6 +26,7 @@ warnings.filterwarnings("ignore")
 st.title("Solar Panel Detection")
 st.write("This is a demo of the solar panel detection application.")
 
+@st.cache
 def load_classification_model(model_path):
     model = torchvision.models.resnet50()
     model.fc = nn.Sequential(nn.Linear(2048, 256), nn.ReLU(), nn.Dropout(0.5), nn.Linear(256, 2))
@@ -33,6 +34,7 @@ def load_classification_model(model_path):
     model.eval()
     return model
 
+@st.cache
 def load_segmentation_model(model_path):
     num_classes = 1
     model = deeplabv3_resnet50(pretrained=True)
