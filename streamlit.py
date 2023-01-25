@@ -1,4 +1,4 @@
-import app as st
+import streamlit_app as st
 import torch
 import torchvision
 import ee
@@ -7,7 +7,7 @@ import torch.nn as nn
 import warnings
 import geopandas as gpd
 import folium
-import app as st
+import streamlit_app as st
 import geemap.foliumap as geemap
 import geopandas as gpd
 import geojson
